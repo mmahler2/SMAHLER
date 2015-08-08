@@ -1,5 +1,4 @@
+
 RewriteEngine On
 RewriteBase /
-RewriteCond %{HTTP_HOST} ^experiments.michaelamahler.com
-RewriteRule ^smahler/(.*)$ http://experiments.michaelamahler.com/smahler/$1 [L,R=301]
 ErrorDocument 404 /smahler/index.php
