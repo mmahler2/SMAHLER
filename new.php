@@ -1,7 +1,10 @@
 <?php
 
+require_once('config.php');
 
-$cn = new mysqli("localhost", "m2", "Maximus1", "m2");
+
+
+$cn = new mysqli(DB_HOST, DB_UN, DB_PW, DB_NAME);
 if ($cn->connect_error) {
 	die("Connection failed: " . $conn->connect_error);
 }
@@ -11,9 +14,9 @@ if ($cn->connect_error) {
 function addNew($hash, $url, $isCustom) {
 	global $cn;
 	
-	$q = "INSERT INTO  `smahler` (`hash`,`redirect`,`custom`,`hits`) VALUES ('$hash','$url','$isCustom',0)";
+	$q = "INSERT INTO  `".DB_TABLE."` (`hash`,`redirect`,`custom`,`hits`) VALUES ('$hash','$url','$isCustom',0)";
 	if ($cn->query($q)) {
-		echo("<h3>Your new <span class='tiny'>(smahl)</span> URL is: <a href='/smahler/$hash'>/smahler/$hash</a></h3>");
+		echo("<h3>Your new <span class='tiny'>(smahl)</span> URL is: <a href='".SUB_URI."$hash'>".SUB_URI."$hash</a></h3>");
 	}
 	else {
 		echo("FAILURE");
@@ -25,7 +28,7 @@ function reHash($hash, $url){
 	global $cn;
 	
 	$hash = substr(hash('adler32', $hash, false), 0, 5); 
-	$q = "select * from smahler where hash = '$hash'" ;
+	$q = "select * from ".DB_TABLE." where hash = '$hash'" ;
 	$res = $cn->query($q);
 	if ($res->num_rows > 0){
 		rehash($hash, $url);
@@ -36,7 +39,6 @@ function reHash($hash, $url){
 
 
 function cleanInput($input) {
- 
 	$search = array(
 	  '@<script[^>]*?>.*?</script>@si',   // Strip out javascript
 	  '@<[\/\!]*?[^<>]*?>@si',            // Strip out HTML tags
@@ -74,7 +76,7 @@ function go() {
 	
 	
 	//if the hash has been used, return the url it belongs to
-	$q = "select redirect from smahler where hash = '$hash'" ;
+	$q = "select redirect from ".DB_TABLE." where hash = '$hash'" ;
 	$res = $cn->query($q);
 	while($row = $res->fetch_assoc()) {
 		$checkURL = $row['redirect'];
@@ -84,14 +86,14 @@ function go() {
 	//url was already used, but wasn't custom
 	if (($checkURL == $url) && ($url !== "") && $check == 1 && $isCustom == 0) {
 		$check = 0;
-		echo("<h3>Your new <span class='tiny'>(smahl)</span> URL is: <a class='tinyurl' href='/smahler/$hash'>/smahler/$hash</a></h3>");
+		echo("<h3>Your new <span class='tiny'>(smahl)</span> URL is: <a class='tinyurl' href='".SUB_URI."$hash'>".SUB_URI."$hash</a></h3>");
 		die();
 	}
 	
 	//custom url already used, but it was the the same redirect
 	if (($checkURL == $url) && ($url !== "") && $check == 1 && $isCustom == 1) {
 		$check = 0;
-		echo("<h3>Your new <span class='tiny'>(smahl)</span> URL is: <a class='tinyurl' href='/smahler/$hash'>/smahler/$hash</a></h3>");
+		echo("<h3>Your new <span class='tiny'>(smahl)</span> URL is: <a class='tinyurl' href='".SUB_URI."$hash'>".SUB_URI."$hash</a></h3>");
 		die();
 	}
 	

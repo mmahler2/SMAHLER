@@ -1,7 +1,12 @@
+<?php
+	require_once('config.php');
+?>
+
+
 <html>
 	<head>
 		<title>SMAHLER</title>
-		<link rel="stylesheet" type="text/css" href="/smahler/style.css" />
+		<link rel="stylesheet" type="text/css" href="style.css" />
 		<link href='http://fonts.googleapis.com/css?family=Raleway:400,300,700' rel='stylesheet' type='text/css'>
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 		<script>
@@ -36,14 +41,14 @@
 			<div id="custom-lib">
 				
 				<?php
-					$cn = new mysqli("localhost", "m2", "Maximus1", "m2");
+					$cn = new mysqli(DB_HOST, DB_UN, DB_PW, DB_NAME);
 					if ($cn->connect_error)
 						die("Connection failed: " . $cn->connect_error);
-					$q = "select * from smahler where custom = 1 order by hits DESC" ;
+					$q = "select * from ".DB_TABLE." where custom = 1 order by hits DESC" ;
 					$res = $cn->query($q);
 					while($row = $res->fetch_assoc()) {
 						echo("<div>");
-						echo("<a href='/smahler/" . $row['hash'] . "'>smahler/" . $row['hash'] . "</a><span class='hits'>hits: ".$row['hits']."</span><br/>");
+						echo("<a href='".SUB_URI."/" . $row['hash'] . "'>".SUB_URI . $row['hash'] . "</a><span class='hits'>hits: ".$row['hits']."</span><br/>");
 						echo("<p>" .$row['redirect']. "</p>");
 						echo("</div>");
 					}
